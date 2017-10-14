@@ -1,9 +1,14 @@
 import Turnstile
-import Auth
 import TurnstileWeb
 import Foundation
 
 public class CSH: OAuth2, Realm {
+    /// Represents a base64-encoded JSON string of a CSH account.
+    public struct Identifier: Credentials {
+        let id: String
+    }
+
+    /// The base URL for CSH's authentication service.
     static let baseURL = URL(string: "https://sso.csh.rit.edu/realms/csh/protocol/openid-connect")!
     
     /// Create a CSH object. Uses the Client ID and Client Secret from the Config
@@ -20,8 +25,7 @@ public class CSH: OAuth2, Realm {
         case let credentials as CSHAccount:
             return credentials
         case let credentials as Identifier:
-            guard case .string(let value) = credentials.id,
-                let account = CSHAccount(uniqueID: value) else {
+            guard let account = CSHAccount(uniqueID: credentials.id) else {
                 throw UnsupportedCredentialsError()
             }
             return account
